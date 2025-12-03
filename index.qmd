@@ -1,0 +1,234 @@
+---
+title: "Visualize Numerical Data Across Groups"
+author:
+  - name: "Johannes Kiesel"
+    email: johannes.kiesel@gesis.org
+    orcid: "https://orcid.org/0000-0002-1617-6508"
+    affiliation: "GESIS Leibniz Institute for the Social Sciences"
+  - name: "Shyam Gupta"
+    email: shyam.gupta@gesis.org
+    orcid: "https://orcid.org/0009-0003-4639-5618"
+    affiliation: "GESIS Leibniz Institute for the Social Sciences"
+date: "2025-12-04"
+format:
+  html: default
+---
+
+## Learning Objective
+
+By completing this tutorial, you will:
+
+TODO
+
+1. Understand the strengths and limitations of each visualization type.
+2. Be able to implement and customize these visualizations in `ggplot2` and related packages.
+3. Interpret results in the context of social science data exploration.
+4. Apply best practices to ensure clarity, accessibility, and reproducibility of your plots.
+
+In this tutorial, I’ll walk you through the plots and visual techniques. I’ll share each plot, explaining *why* you might want to use them, *what* they reveal, and *how* to make them.
+
+By the end of this tutorial, you’ll have a handy arsenal of 9 powerful visualization techniques perfect for social science data exploration. Let’s get started!
+
+## Target Audience
+
+This tutorial is designed for intermediate users who have already visualized data in R and are looking for more ways to visualize.
+
+## Duration
+
+Around TODO minutes.
+
+## Use Cases
+
+- TODO
+
+## Computational Environment Setup
+
+Ensure you have [R](https://cran.r-project.org/) (version 3.6.0 or higher) installed on your system. To ensure a smooth tutorial, first install all required packages:
+
+```{r}
+#| eval: false
+install.packages("ggplot2")
+install.packages("ggbeeswarm")
+install.packages("maps")
+```
+
+The tutorial uses the widespread [ggplot2](https://ggplot2.tidyverse.org/) library for plotting. Load it:
+
+```{r}
+library(ggplot2)
+```
+
+## Data
+
+This tutorial uses data of the [capitals of the world](zenodo.org/records/17804237) taken from [Wikidata](https://www.wikidata.org). Load it and have a quick check:
+
+```{r}
+capitals <- read.csv(url("https://zenodo.org/records/17804237/files/capitals-2025-12-03.csv"))
+head(capitals)
+summary(capitals)
+```
+
+For the sake of example, assume we are interested in the size of capitals across the world. To this end, we want to see the areas of the capitals grouped by the continent they are on.
+
+> Exercise: After you finish each section of this tutorial, switch to using the population instead of the area for that section. Do your answers to the exercises change?
+
+There is no better or worse plot type in general - it depends on the data you have, but also on what insight you are looking for. Though, in doubt which one to choose, use the most standard one that still brings across what you want to see or to convey to others. Then people have to spent less effort to understand the plot type and can focus more on understanding the data.
+
+## Histogram
+
+Let us start with the standard plot types. Often, this is sufficient. Especially if you just want to check whether the data is as you expect it to be, a standard plot type if most often the way to go.
+
+For example, in preparation for this tutorial, a standard histogram check showed us that our original data used different measurement units (square meters and square kilometers), leading to vastly different numbers for the area - which we then resolved by using a normalized attribute instead.
+
+In ggplot, we define the data points (`capitals` and `aes(x=..., fill=...)`) and then how the data points should be marked in the visualization ("geoms"). In the simplest case, this looks like this:
+
+```{r}
+ggplot(capitals, aes(x=area, fill=continent)) + geom_histogram()
+```
+
+Interpretation:
+
+- The bars show the overall distribution and the colors show how much data from each continent contributes to each bar
+
+Histograms show the frequency distribution through bars, but the bin choice is sometimes critical. You should never test only one number of bins, or else you might miss something that is not visible for the number you chosen.
+
+```{r}
+ggplot(capitals, aes(x=area, fill=continent)) + geom_histogram(bins=3)
+```
+
+```{r}
+ggplot(capitals, aes(x=area, fill=continent)) + geom_histogram(bins=1000)
+```
+
+> Exercises:
+>
+> - What are problems if the number of bins is "too small" and what if it is "too large"?
+> - In `geom_histogram`, use `position="fill"`. Can you interpret this plot?
+
+## Density
+
+To avoid choosing a bin size and still being able to see the general distribution, density plots show the smoothed distribution of the data points. Instead of stacking the counts for the different groups (in our case continents), this plot type plots them above each other, making it necessary to make the visuals transparent (here `alpha=0.2`):
+
+```{r}
+ggplot(capitals, aes(x=area, fill=continent)) + geom_density(alpha=0.2)
+```
+
+Interpretation:
+
+- Similar curves indicate similar distributions
+
+> Exercises:
+>
+> - In `geom_density`, set `alpha` to change the transparency, 0 being not visible and 1 being fully opaque
+> - In `geom_density`, set `adjust` to control the bandwidth of density estimation: the higher the smoother the plot
+> - Add `+ geom_rug(alpha = 0.3)` to add tick marks for individual data points
+
+Instead of using `alpha`, you can also display each density in a separate (aligned) plot using `facet_wrap`:
+
+```{r}
+ggplot(capitals, aes(x=area)) + facet_wrap(~continent, ncol=1) + geom_density()
+```
+
+Instead of aligning the plots in one column, one can also place them upright (i.e., x and y switched) and next to another, leading to a so-called "violin plot". Swap `x` and `fill/y` and replace `geom_density()` with `geom_violin()`:
+
+```{r}
+ggplot(capitals, aes(x=continent, y=area)) + geom_violin()
+```
+
+> Exercises:
+>
+> - In which of the above plots is it easiest for you to say whether there are more small cities in Europe or North America?
+> - In the violin plot, add `+ coord_flip()`. Can you see differences between the facetted plot and the flipped violin plot?
+> - Also `geom_violin` has the `adjust` parameter. When should you decrease this parameter and when should you increase it? Try it with `adjust=10` and `adjust=0.01`!
+
+## Points
+
+A different approach is to show the single data points instead of aggregated counts, which offers a straightforward solution, especially if the number of data points is relatively low:
+
+```{r}
+ggplot(capitals, aes(x=continent, y=area)) + geom_point()
+```
+
+However, even for relatively low number of data points, this visualization suffers from "overplotting" in its most basic form shown above: several points are plotted on the same spot - the viewer can not tell how many. Several ways exist to counter this loss of information, at least to some degree.
+
+First, you can use transparency like in the density plots:
+
+```{r}
+ggplot(capitals, aes(x=continent, y=area)) + geom_point(alpha=0.2)
+```
+
+Second, you can have the points be moved horizontally in case they would overplot (called "Beeswarm"):
+
+```{r}
+library(ggbeeswarm)
+ggplot(capitals, aes(x=continent, y=area)) + geom_beeswarm()
+```
+
+Third, you can add a random horizontal offset to each point (called "Jitter"):
+
+```{r}
+ggplot(capitals, aes(x=continent, y=area)) + geom_jitter()
+```
+
+Interpretation:
+
+- Each visual point corresponds to one data point - darker or clustered areas show regions of high density
+
+> Exercises:
+> 
+> - In which of the above plots is it easiest for you to say whether there are more small cities in Europe or North America?
+> - In which of the above plots is it the most difficult to say for each point to which continent it belongs? How could you change that?
+> - In the transparent points plot, in `geom_point`, change `alpha`. What values of `alpha` are too small, and which too large?
+> - In the Beeswarm plot, in `aes`, use `shape=continent` or `color=continent` (or both). What are the advantages of each?
+> - In the jittered points plot, in `geom_jitter`, set `width` to different numeric values (e.g., 0.1, 1, 10, ...). What values of `width` are too small, and which too large?
+
+## Box Plots
+
+In scientific publications, one can often find the box plot as another option, though it takes some knowledge to interpret it:
+
+```{r}
+ggplot(capitals, aes(x=continent, y=area)) + geom_boxplot()
+```
+
+
+Interpretation:
+
+- In a nutshell, the horizontal line in each box is the [median](https://en.wikipedia.org/wiki/Median), the box covers the [first](https://en.wikipedia.org/wiki/First_quartile) to [third quartile](https://en.wikipedia.org/wiki/Third_quartile), the lines that extend from the box up and down show what can be considered a regular range of the data and all points above and below those lines are considered non-regular ("outlier") data points - which should be inspected to see whether those are due to data errors. The [Box plot Wikipedia page](https://en.wikipedia.org/wiki/Box_plot) describes box plots in detail. The used R implementation draws the whiskers at 1.5 the interquartile range.
+
+> Exercises
+>
+> - Instead of showing just the outliers, it can make sense to combine the boxplot with plots showing all points. Add `outlier.shape=NA` to `geom_boxplot` to remove the outliers from the plot, then use `+` to add another geom from above (e.g., `+ geom_jitter()`). What are advantages and what are disadvantages of such a combination of plots?
+
+## Can I Look at the Data Another Way?
+
+Finally, when visualizing your data, you should always have an open mind for exploration. Maybe there is another way to look at the data, potentially providing new insights? For example, we started with the question of how large the capitals are in different regions of the world - so, instead of grouping them by continent, it might also be sensible to plot them on a world map:
+
+```{r}
+world_map <- map_data("world")
+ggplot() + geom_polygon(data=world_map, aes(x=long, y=lat, group=group), color="white") + geom_point(data=capitals, aes(x=longitude, y=latitude, size=population), color="red")
+```
+
+# Conclusion
+
+Throughout this tutorial, we've covered:
+
+1. **Swarm Plots:** Reveal individual observations clearly.
+2. **Density Plots:** Smooth distributions for group comparison.
+3. **Box + Jitter:** Combine summary statistics and raw data.
+4. **Violin Plots:** Show full density shapes with internal summaries.
+5. **Bar + Line Combo:** Dual view of counts and trends.
+6. **Correlation Heatmap:** Visual overview of variable associations.
+7. **Scatter + Regression:** Assess linear relationships with confidence bands.
+8. **Stacked Bar Charts:** Display totals and compositions of categories.
+9. **Geographic Maps:** Thematic and point-based spatial visualizations.
+
+Use these techniques as a foundation. Customize further with color palettes, themes, annotations, and interactivity (e.g., with `plotly` or `shiny`). Share reproducible code, include captions explaining insights, and follow accessibility guidelines to make your research inclusive.
+
+---
+
+
+## Further reading:
+
+- [ggplot2 cheatsheet](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf)
+- [Distribution plots on R Charts](https://r-charts.com/distribution/)
+- [Histogram on the R Graph Gallery](https://r-graph-gallery.com/histogram.html) - see also "Related Chart Types" at the bottom

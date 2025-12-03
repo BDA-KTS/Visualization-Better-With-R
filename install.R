@@ -1,10 +1,4 @@
 # install.R
-install.packages("rlang")
 install.packages("ggplot2")
-install.packages("dplyr", dependencies = TRUE)
-install.packages("forcats")
-install.packages("hrbrthemes")
-install.packages("viridis")
-install.packages("zoo")
-install.packages("corrplot")
+install.packages("ggbeeswarm")
 install.packages("maps")
