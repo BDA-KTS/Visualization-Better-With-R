@@ -69,9 +69,9 @@ summary(capitals)
 
 For the sake of example, assume we are interested in the size of capitals across the world. To this end, we want to see the areas of the capitals grouped by the continent they are on.
 
-> Exercises:
->
-> - After you finish each section of this tutorial, switch to using the population instead of the area for that section. Do your answers to the exercises change?
+Exercises:
+
+- After you finish each section of this tutorial, switch to using the population instead of the area for that section. Do your answers to the exercises change?
 
 But, as a note up front, there is no better or worse plot type in general - it depends on the data you have, but also on what insight you are looking for.
 
@@ -101,10 +101,10 @@ ggplot(capitals, aes(x=area, fill=continent)) + geom_histogram(bins=3)
 ggplot(capitals, aes(x=area, fill=continent)) + geom_histogram(bins=1000)
 ```
 
-> Exercises:
->
-> - What are problems if the number of bins is "too small" and what if it is "too large"?
-> - In `geom_histogram`, use `position="fill"`. Can you interpret this plot?
+Exercises:
+
+- What are problems if the number of bins is "too small" and what if it is "too large"?
+- In `geom_histogram`, use `position="fill"`. Can you interpret this plot?
 
 ## Plotting Density
 
@@ -118,11 +118,11 @@ Interpretation:
 
 - Similar curves indicate similar distributions
 
-> Exercises:
->
-> - In `geom_density`, set `alpha` to change the transparency, 0 being not visible and 1 being fully opaque
-> - In `geom_density`, set `adjust` to control the bandwidth of density estimation: the higher the smoother the plot
-> - Add `+ geom_rug(alpha = 0.3)` to add tick marks for individual data points
+Exercises:
+
+- In `geom_density`, set `alpha` to change the transparency, 0 being not visible and 1 being fully opaque
+- In `geom_density`, set `adjust` to control the bandwidth of density estimation: the higher the smoother the plot
+- Add `+ geom_rug(alpha = 0.3)` to add tick marks for individual data points
 
 Instead of using `alpha`, you can also display each density in a separate (aligned) plot using `facet_wrap`:
 
@@ -136,11 +136,11 @@ Instead of aligning the plots in one column, one can also place them upright (i.
 ggplot(capitals, aes(x=continent, y=area)) + geom_violin()
 ```
 
-> Exercises:
->
-> - In which of the above plots is it easiest for you to say whether there are more small cities in Europe or North America?
-> - In the violin plot, add `+ coord_flip()`. Can you see differences between the facetted plot and the flipped violin plot?
-> - Also `geom_violin` has the `adjust` parameter. When should you decrease this parameter and when should you increase it? Try it with `adjust=10` and `adjust=0.01`!
+Exercises:
+
+- In which of the above plots is it easiest for you to say whether there are more small cities in Europe or North America?
+- In the violin plot, add `+ coord_flip()`. Can you see differences between the facetted plot and the flipped violin plot?
+- Also `geom_violin` has the `adjust` parameter. When should you decrease this parameter and when should you increase it? Try it with `adjust=10` and `adjust=0.01`!
 
 ## Plotting Points
 
@@ -175,13 +175,12 @@ Interpretation:
 
 - Each visual point corresponds to one data point - darker or clustered areas show regions of high density
 
-> Exercises:
-> 
-> - In which of the above plots is it easiest for you to say whether there are more small cities in Europe or North America?
-> - In which of the above plots is it the most difficult to say for each point to which continent it belongs? How could you change that?
-> - In the transparent points plot, in `geom_point`, change `alpha`. What values of `alpha` are too small, and which too large?
-> - In the Beeswarm plot, in `aes`, use `shape=continent` or `color=continent` (or both). What are the advantages of each?
-> - In the jittered points plot, in `geom_jitter`, set `width` to different numeric values (e.g., 0.1, 1, 10, ...). What values of `width` are too small, and which too large?
+Exercises:
+
+- In which of the above plots is it easiest for you to say whether there are more small cities in Europe or North America?
+- In which of the above plots is it the most difficult to say for each point to which continent it belongs? How could you change that?
+- In the transparent points plot, in `geom_point`, change `alpha`. What values of `alpha` are too small, and which too large?
+- In the Beeswarm plot, in `aes`, use `shape=continent` or `color=continent` (or both). What are the advantages of each? - In the jittered points plot, in `geom_jitter`, set `width` to different numeric values (e.g., 0.1, 1, 10, ...). What values of `width` are too small, and which too large?
 
 ## Plotting Box Plots
 
@@ -196,9 +195,9 @@ Interpretation:
 
 - In a nutshell, the horizontal line in each box is the [median](https://en.wikipedia.org/wiki/Median), the box covers the [first](https://en.wikipedia.org/wiki/First_quartile) to [third quartile](https://en.wikipedia.org/wiki/Third_quartile), the lines that extend from the box up and down show what can be considered a regular range of the data and all points above and below those lines are considered non-regular ("outlier") data points - which should be inspected to see whether those are due to data errors. The [Box plot Wikipedia page](https://en.wikipedia.org/wiki/Box_plot) describes box plots in detail. The used R implementation draws the whiskers at 1.5 the interquartile range.
 
-> Exercises
->
-> - Instead of showing just the outliers, it can make sense to combine the boxplot with plots showing all points. Add `outlier.shape=NA` to `geom_boxplot` to remove the outliers from the plot, then use `+` to add another geom from above (e.g., `+ geom_jitter()`). What are advantages and what are disadvantages of such a combination of plots?
+Exercises
+
+- Instead of showing just the outliers, it can make sense to combine the boxplot with plots showing all points. Add `outlier.shape=NA` to `geom_boxplot` to remove the outliers from the plot, then use `+` to add another geom from above (e.g., `+ geom_jitter()`). What are advantages and what are disadvantages of such a combination of plots?
 
 ## Can I Look at the Data in Another Way?
 
