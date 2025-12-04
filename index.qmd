@@ -14,32 +14,31 @@ format:
   html: default
 ---
 
+This tutorial provides a tour to several plot types for plotting numerical data across groups. It uses the widespread ggplot2 R plotting library. The plots produced during the tutorial are not prettied up or optimized to the data. Instead, the tutorial focuses on illustrating the concepts with as little code as possible.
+
 ## Learning Objective
 
-By completing this tutorial, you will:
+By the end of this tutorial, you will be able to:
 
-TODO
+- Choose from a collection of plot types when having to visualize numerical data across groups
+- Understand typical problems of plots and know approaches to mitigate them
+- Quickly make basic plots in R with `ggplot2`
 
-1. Understand the strengths and limitations of each visualization type.
-2. Be able to implement and customize these visualizations in `ggplot2` and related packages.
-3. Interpret results in the context of social science data exploration.
-4. Apply best practices to ensure clarity, accessibility, and reproducibility of your plots.
-
-In this tutorial, I’ll walk you through the plots and visual techniques. I’ll share each plot, explaining *why* you might want to use them, *what* they reveal, and *how* to make them.
-
-By the end of this tutorial, you’ll have a handy arsenal of 9 powerful visualization techniques perfect for social science data exploration. Let’s get started!
+Each section comes with a set of exercises. If your objective is to quickly make basic plots, you do not need to take these exercises. If you want to gain a deeper understand of visualization techniques, you should take these exercises. To do so, start this tutorial in an interactive environment (see top of this page), which allows you to modify an re-run the code cells.
 
 ## Target Audience
 
-This tutorial is designed for intermediate users who have already visualized data in R and are looking for more ways to visualize.
+This tutorial is designed for intermediate users who have already loaded and modified data in R but have not necessarily visualized the data.
 
 ## Duration
 
-Around TODO minutes.
+Around half a work day to complete all exercises. Around half an hour to just read through.
 
 ## Use Cases
 
-- TODO
+- When starting to investigate a new dataset, to check on a numerical attribute whether the values are distributed as one would expect
+- When preparing a visualization for a publication or report, if some effect is not clearly visible or one sees a problem with the first visualization one tried
+- When visualizing data, to be able to make an informed decision on which plot type to use
 
 ## Computational Environment Setup
 
@@ -70,11 +69,13 @@ summary(capitals)
 
 For the sake of example, assume we are interested in the size of capitals across the world. To this end, we want to see the areas of the capitals grouped by the continent they are on.
 
-> Exercise: After you finish each section of this tutorial, switch to using the population instead of the area for that section. Do your answers to the exercises change?
+> Exercises:
+>
+> - After you finish each section of this tutorial, switch to using the population instead of the area for that section. Do your answers to the exercises change?
 
-There is no better or worse plot type in general - it depends on the data you have, but also on what insight you are looking for. Though, in doubt which one to choose, use the most standard one that still brings across what you want to see or to convey to others. Then people have to spent less effort to understand the plot type and can focus more on understanding the data.
+But, as a note up front, there is no better or worse plot type in general - it depends on the data you have, but also on what insight you are looking for.
 
-## Histogram
+## Plotting Histograms
 
 Let us start with the standard plot types. Often, this is sufficient. Especially if you just want to check whether the data is as you expect it to be, a standard plot type if most often the way to go.
 
@@ -105,7 +106,7 @@ ggplot(capitals, aes(x=area, fill=continent)) + geom_histogram(bins=1000)
 > - What are problems if the number of bins is "too small" and what if it is "too large"?
 > - In `geom_histogram`, use `position="fill"`. Can you interpret this plot?
 
-## Density
+## Plotting Density
 
 To avoid choosing a bin size and still being able to see the general distribution, density plots show the smoothed distribution of the data points. Instead of stacking the counts for the different groups (in our case continents), this plot type plots them above each other, making it necessary to make the visuals transparent (here `alpha=0.2`):
 
@@ -141,7 +142,7 @@ ggplot(capitals, aes(x=continent, y=area)) + geom_violin()
 > - In the violin plot, add `+ coord_flip()`. Can you see differences between the facetted plot and the flipped violin plot?
 > - Also `geom_violin` has the `adjust` parameter. When should you decrease this parameter and when should you increase it? Try it with `adjust=10` and `adjust=0.01`!
 
-## Points
+## Plotting Points
 
 A different approach is to show the single data points instead of aggregated counts, which offers a straightforward solution, especially if the number of data points is relatively low:
 
@@ -182,7 +183,7 @@ Interpretation:
 > - In the Beeswarm plot, in `aes`, use `shape=continent` or `color=continent` (or both). What are the advantages of each?
 > - In the jittered points plot, in `geom_jitter`, set `width` to different numeric values (e.g., 0.1, 1, 10, ...). What values of `width` are too small, and which too large?
 
-## Box Plots
+## Plotting Box Plots
 
 In scientific publications, one can often find the box plot as another option, though it takes some knowledge to interpret it:
 
@@ -199,7 +200,7 @@ Interpretation:
 >
 > - Instead of showing just the outliers, it can make sense to combine the boxplot with plots showing all points. Add `outlier.shape=NA` to `geom_boxplot` to remove the outliers from the plot, then use `+` to add another geom from above (e.g., `+ geom_jitter()`). What are advantages and what are disadvantages of such a combination of plots?
 
-## Can I Look at the Data Another Way?
+## Can I Look at the Data in Another Way?
 
 Finally, when visualizing your data, you should always have an open mind for exploration. Maybe there is another way to look at the data, potentially providing new insights? For example, we started with the question of how large the capitals are in different regions of the world - so, instead of grouping them by continent, it might also be sensible to plot them on a world map:
 
@@ -208,24 +209,11 @@ world_map <- map_data("world")
 ggplot() + geom_polygon(data=world_map, aes(x=long, y=lat, group=group), color="white") + geom_point(data=capitals, aes(x=longitude, y=latitude, size=population), color="red")
 ```
 
-# Conclusion
+## Conclusion
 
-Throughout this tutorial, we've covered:
+There is no better or worse plot type in general - it depends on the data you have, but also on what insight you are looking for. But if you notice problems like overplotting or a badly chosen bin size, you should now have a general understanding of ways to address these problems.
 
-1. **Swarm Plots:** Reveal individual observations clearly.
-2. **Density Plots:** Smooth distributions for group comparison.
-3. **Box + Jitter:** Combine summary statistics and raw data.
-4. **Violin Plots:** Show full density shapes with internal summaries.
-5. **Bar + Line Combo:** Dual view of counts and trends.
-6. **Correlation Heatmap:** Visual overview of variable associations.
-7. **Scatter + Regression:** Assess linear relationships with confidence bands.
-8. **Stacked Bar Charts:** Display totals and compositions of categories.
-9. **Geographic Maps:** Thematic and point-based spatial visualizations.
-
-Use these techniques as a foundation. Customize further with color palettes, themes, annotations, and interactivity (e.g., with `plotly` or `shiny`). Share reproducible code, include captions explaining insights, and follow accessibility guidelines to make your research inclusive.
-
----
-
+Though, in doubt which of a set of plausible plot types to choose, use the most standard one that still brings across what you want to see or to convey to others. Then you and your audience have to spent less effort to understand the plot type and can focus more on understanding the data.
 
 ## Further reading:
 
