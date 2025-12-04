@@ -24,7 +24,7 @@ By the end of this tutorial, you will be able to:
 - Understand typical problems of plots and know approaches to mitigate them
 - Quickly make basic plots in R with `ggplot2`
 
-Each section comes with a set of exercises. If your objective is to quickly make basic plots, you do not need to take these exercises. If you want to gain a deeper understand of visualization techniques, you should take these exercises. To do so, start this tutorial in an interactive environment (see top of this page), which allows you to modify an re-run the code cells.
+Each section comes with a set of exercises. If your objective is to quickly make basic plots, you do not need to take these exercises. If you want to gain a deeper understand of visualization techniques, you should take these exercises. To do so, start this tutorial in an interactive environment (see top of this page) and open the `index.qmd` file, which allows you to modify an re-run the code cells.
 
 ## Target Audience
 
